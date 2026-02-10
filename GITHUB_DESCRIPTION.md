@@ -25,5 +25,5 @@ privacy-first
 
 **Social Preview Text** (for when shared):
 ```
-CrustScore: Because your pizza deserves a fair trial. AI-powered professional pizza evaluation using 50 Top Pizza standards. Upload, get judged, improve your dough game. 🍕⭐
+ai_pizza_judge: Because your pizza deserves a fair trial. AI-powered professional pizza evaluation using 50 Top Pizza standards. Upload, get judged, improve your dough game. 🍕⭐
 ```
