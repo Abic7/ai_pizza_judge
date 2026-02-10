@@ -135,8 +135,8 @@ Based on [50 Top Pizza](https://www.50toppizza.it/en/) standards, the world's mo
 
 ## 🎨 Screenshots
 
-(https://github.com/Abic7/ai_pizza_judge/blob/main/ai_pizza_Judge_ui.png)
-*Screenshots coming soon! Feel free to add yours via PR.*
+### Upload Interface
+![Upload Interface](https://github.com/Abic7/ai_pizza_judge/blob/main/ai_pizza_Judge_ui.png?raw=true)
 
 **What you'll see:**
 - Clean, professional upload interface
@@ -266,7 +266,7 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 
 Built with frustration over mediocre pizzas and fascination with AI vision models.
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **50 Top Pizza** - For establishing world-class pizza evaluation standards
 - **LM Studio Team** - For making local AI accessible
