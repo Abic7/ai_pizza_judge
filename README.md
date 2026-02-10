@@ -1,4 +1,4 @@
-# 🍕 ai_pizza_judge - Professional Pizza Evaluation App
+# 🍕 ai_pizza_judge - Professional Pizza Evaluation WebApp
 
 > Because your pizza deserves a fair trial by an AI jury of its peers (trained on the finest Neapolitan standards, naturally).
 
@@ -135,7 +135,7 @@ Based on [50 Top Pizza](https://www.50toppizza.it/en/) standards, the world's mo
 
 ## 🎨 Screenshots
 
-<!-- Add screenshots here -->
+(https://github.com/Abic7/ai_pizza_judge/blob/main/ai_pizza_Judge_ui.png)
 *Screenshots coming soon! Feel free to add yours via PR.*
 
 **What you'll see:**
