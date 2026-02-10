@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional Pizza Evaluator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      --primary: #1a1a1a;
+      --secondary: #2c2c2c;
+      --accent: #8b7355;
+      --gold: #d4af37;
+      --bg: #f5f5f0;
+      --text: #1a1a1a;
+      --border: #d4d4d4;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      color: var(--text);
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+    
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    
+    header {
+      text-align: center;
+      padding: 40px 0 30px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 30px;
+      animation: slideDown 0.6s ease-out;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    
+    .tagline {
+      font-size: 13px;
+      color: #666;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    
+    .upload-section {
+      background: white;
+      border-radius: 2px;
+      padding: 40px 30px;
+      border: 1px solid var(--border);
+      margin: 20px 0;
+      animation: fadeInUp 0.6s ease-out 0.2s both;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .upload-area {
+      border: 2px solid var(--border);
+      border-radius: 2px;
+      padding: 60px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: var(--bg);
+    }
+    
+    .upload-area:hover {
+      border-color: var(--accent);
+      background: white;
+    }
+    
+    .upload-area.dragging {
+      border-color: var(--accent);
+      background: #fafaf8;
+    }
+    
+    .upload-icon {
+      font-size: 48px;
+      margin-bottom: 20px;
+      display: block;
+      opacity: 0.6;
+    }
+    
+    .upload-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+    
+    .upload-hint {
+      font-size: 13px;
+      color: #888;
+    }
+    
+    input[type="file"] {
+      display: none;
+    }
+    
+    .preview-container {
+      margin-top: 30px;
+      display: none;
+      animation: fadeInUp 0.4s ease-out;
+    }
+    
+    .preview-container.active {
+      display: block;
+    }
+    
+    .preview-image {
+      width: 100%;
+      border-radius: 2px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    
+    .analyze-btn {
+      width: 100%;
+      padding: 18px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 2px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .analyze-btn:hover:not(:disabled) {
+      background: var(--secondary);
+      transform: translateY(-1px);
+    }
+    
+    .analyze-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .results {
+      background: white;
+      border-radius: 2px;
+      padding: 40px 30px;
+      border: 1px solid var(--border);
+      margin: 20px 0;
+      display: none;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .results.active {
+      display: block;
+    }
+    
+    .score-circle {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      border: 3px solid var(--gold);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+    
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    
+    .score-number {
+      font-size: 48px;
+      font-weight: 700;
+      font-family: 'Cormorant Garamond', serif;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    
+    .star-display {
+      font-size: 32px;
+      line-height: 1;
+      letter-spacing: 2px;
+    }
+    
+    .score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #888;
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    
+    .details-toggle {
+      width: 100%;
+      padding: 16px 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-bottom: 16px;
+      transition: all 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--primary);
+    }
+    
+    .details-toggle:hover {
+      background: white;
+      border-color: var(--accent);
+    }
+    
+    .details-toggle::after {
+      content: '▼';
+      font-size: 10px;
+      transition: transform 0.3s ease;
+    }
+    
+    .details-toggle.active::after {
+      transform: rotate(180deg);
+    }
+    
+    .details-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .details-content.active {
+      max-height: 1000px;
+    }
+    
+    .rating-category {
+      background: var(--bg);
+      border-left: 3px solid var(--accent);
+      padding: 20px;
+      border-radius: 2px;
+      margin-bottom: 16px;
+      animation: slideInRight 0.5s ease-out both;
+    }
+    
+    @keyframes slideInRight {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    .rating-category:nth-child(1) { animation-delay: 0.1s; }
+    .rating-category:nth-child(2) { animation-delay: 0.2s; }
+    .rating-category:nth-child(3) { animation-delay: 0.3s; }
+    .rating-category:nth-child(4) { animation-delay: 0.4s; }
+    .rating-category:nth-child(5) { animation-delay: 0.5s; }
+    
+    .rating-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    
+    .rating-score {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .rating-text {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.6;
+    }
+    
+    .verdict {
+      text-align: center;
+      margin-top: 40px;
+      padding: 30px 24px;
+      background: var(--bg);
+      border-radius: 2px;
+      border-top: 3px solid var(--gold);
+      animation: fadeInUp 0.6s ease-out 0.6s both;
+    }
+    
+    .verdict-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+    
+    .verdict-text {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #555;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 60px 40px;
+      display: none;
+    }
+    
+    .loading.active {
+      display: block;
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      margin: 0 auto 20px;
+      border: 3px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .loading-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    
+    .reset-btn {
+      width: 100%;
+      padding: 16px;
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--border);
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      margin-top: 30px;
+      transition: all 0.3s ease;
+    }
+    
+    .reset-btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .not-pizza-error {
+      background: white;
+      border-radius: 2px;
+      padding: 60px 40px;
+      border: 1px solid var(--border);
+      margin: 20px 0;
+      text-align: center;
+      display: none;
+      animation: fadeInUp 0.6s ease-out;
+    }
+    
+    .not-pizza-error.active {
+      display: block;
+    }
+    
+    .not-pizza-icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+      display: block;
+    }
+    
+    .not-pizza-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+    }
+    
+    .not-pizza-message {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #555;
+      margin-bottom: 30px;
+    }
+    
+    .try-again-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .try-again-btn:hover {
+      background: var(--secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Pizza Evaluator</div>
+      <div class="tagline">Professional Assessment System</div>
+    </header>
+    
+    <div class="upload-section">
+      <div style="margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border);">
+        <label style="display: block; font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 8px; letter-spacing: 0.5px; text-transform: uppercase;">LM Studio API Endpoint</label>
+        <input type="text" id="apiEndpoint" value="http://localhost:1234/v1/chat/completions" 
+               style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 2px; font-size: 14px; font-family: 'Inter', sans-serif;">
+        <div style="font-size: 12px; color: #888; margin-top: 6px;">Default: http://localhost:1234/v1/chat/completions</div>
+      </div>
+      
+      <div style="margin-bottom: 24px; padding: 20px; background: var(--bg); border-radius: 2px; border-left: 3px solid var(--gold);">
+        <div style="font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase;">Scoring System</div>
+        <div style="font-size: 14px; line-height: 1.8; color: #555;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span><strong>6.5-7.5 ⭐:</strong> Good quality pizza</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span><strong>7.6-8.5 ⭐:</strong> Excellent pizza</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span><strong>8.6-10 ⭐:</strong> Exceptional, world-class pizza</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="upload-area" id="uploadArea">
+        <span class="upload-icon">📷</span>
+        <div class="upload-text">Upload Pizza Image</div>
+        <div class="upload-hint">Tap to select or drag & drop</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*">
+      
+      <div class="preview-container" id="previewContainer">
+        <img id="previewImage" class="preview-image" alt="Pizza preview">
+        <button class="analyze-btn" id="analyzeBtn">Begin Professional Evaluation</button>
+      </div>
+    </div>
+    
+    <div class="loading" id="loading">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Evaluating...</div>
+    </div>
+    
+    <div class="not-pizza-error" id="notPizzaError">
+      <span class="not-pizza-icon">🤨</span>
+      <div class="not-pizza-title">Um, That's Not Pizza...</div>
+      <div class="not-pizza-message" id="notPizzaMessage"></div>
+      <button class="try-again-btn" id="tryAgainBtn">Upload an Actual Pizza</button>
+    </div>
+    
+    <div class="results" id="results">
+      <div class="score-circle">
+        <div class="score-number" id="scoreNumber">0</div>
+        <div class="star-display" id="starDisplay"></div>
+      </div>
+      <div class="score-label">Overall Rating</div>
+      
+      <button class="details-toggle" id="detailsToggle">
+        <span>More Details</span>
+      </button>
+      
+      <div class="details-content" id="detailsContent">
+        <div id="ratingsContainer"></div>
+      </div>
+      
+      <div class="verdict">
+        <div class="verdict-title" id="verdictTitle">Professional Assessment</div>
+        <div class="verdict-text" id="verdictText"></div>
+      </div>
+      
+      <button class="reset-btn" id="resetBtn">Evaluate Another Pizza</button>
+    </div>
+  </div>
+
+  <script>
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImage = document.getElementById('previewImage');
+    const analyzeBtn = document.getElementById('analyzeBtn');
+    const loading = document.getElementById('loading');
+    const results = document.getElementById('results');
+    const scoreNumber = document.getElementById('scoreNumber');
+    const starDisplay = document.getElementById('starDisplay');
+    const ratingsContainer = document.getElementById('ratingsContainer');
+    const verdictTitle = document.getElementById('verdictTitle');
+    const verdictText = document.getElementById('verdictText');
+    const resetBtn = document.getElementById('resetBtn');
+    const apiEndpoint = document.getElementById('apiEndpoint');
+    const detailsToggle = document.getElementById('detailsToggle');
+    const detailsContent = document.getElementById('detailsContent');
+    const notPizzaError = document.getElementById('notPizzaError');
+    const notPizzaMessage = document.getElementById('notPizzaMessage');
+    const tryAgainBtn = document.getElementById('tryAgainBtn');
+    
+    let currentImageData = null;
+    
+    // Details toggle functionality
+    detailsToggle.addEventListener('click', () => {
+      detailsToggle.classList.toggle('active');
+      detailsContent.classList.toggle('active');
+    });
+    
+    // Try again button
+    tryAgainBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      currentImageData = null;
+      previewContainer.classList.remove('active');
+      notPizzaError.classList.remove('active');
+      
+      // Show the upload section and upload area again
+      document.querySelector('.upload-section').style.display = 'block';
+      document.getElementById('uploadArea').style.display = 'block';
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    
+    // Upload area click
+    uploadArea.addEventListener('click', () => fileInput.click());
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadArea.classList.add('dragging');
+    });
+    
+    uploadArea.addEventListener('dragleave', () => {
+      uploadArea.classList.remove('dragging');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadArea.classList.remove('dragging');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        handleFile(file);
+      }
+    });
+    
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        handleFile(file);
+      }
+    });
+    
+    function handleFile(file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        currentImageData = e.target.result;
+        previewImage.src = currentImageData;
+        previewContainer.classList.add('active');
+        
+        // Hide upload area immediately when image is loaded
+        document.getElementById('uploadArea').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    }
+    
+    // Analyze button
+    analyzeBtn.addEventListener('click', async () => {
+      if (!currentImageData) return;
+      
+      analyzeBtn.disabled = true;
+      loading.classList.add('active');
+      results.classList.remove('active');
+      notPizzaError.classList.remove('active');
+      
+      try {
+        const base64Data = currentImageData.split(',')[1];
+        const mediaType = currentImageData.split(';')[0].split(':')[1];
+        
+        // LM Studio uses OpenAI-compatible API format
+        const response = await fetch(apiEndpoint.value, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: "local-model", // LM Studio will use whatever model is loaded
+            messages: [
+              {
+                role: "user",
+                content: [
+                  {
+                    type: "image_url",
+                    image_url: {
+                      url: currentImageData
+                    }
+                  },
+                  {
+                    type: "text",
+                    text: `Analyze this image as a professional pizza evaluator.
+
+STEP 1: Is this actually a pizza? If NO, respond with:
+{"is_pizza": false, "confidence": 0, "funny_message": "Your witty one-liner about what they uploaded"}
+
+STEP 2: If YES (it's pizza), evaluate on scale of 1-10 and respond with:
+{
+  "is_pizza": true,
+  "confidence": 95,
+  "overall_score": 7.8,
+  "categories": [
+    {"name": "Dough & Fermentation", "score": 2.0, "max_score": 2.5, "assessment": "Crust shows good leopard spotting with adequate air pockets"},
+    {"name": "Cooking Technique", "score": 2.1, "max_score": 2.5, "assessment": "Even char pattern indicates proper high-heat oven technique"},
+    {"name": "Ingredient Quality", "score": 1.8, "max_score": 2.5, "assessment": "Cheese coverage is good but appears to be standard mozzarella"},
+    {"name": "Build & Composition", "score": 1.1, "max_score": 1.5, "assessment": "Slightly heavy-handed with cheese distribution in center"},
+    {"name": "Presentation", "score": 0.8, "max_score": 1.0, "assessment": "Appetizing appearance with nice basil placement"}
+  ],
+  "professional_assessment": "Write 2-3 sentences summarizing this specific pizza's strengths and weaknesses. Mention specific observations like crust development, ingredient choices, or cooking execution. Be evaluative and professional."
+}
+
+Evaluation criteria:
+- Dough: fermentation, crust structure, leopard spotting (2.5 pts)
+- Cooking: char, even baking, temperature (2.5 pts)  
+- Ingredients: cheese quality, sauce, toppings (2.5 pts)
+- Composition: distribution, balance (1.5 pts)
+- Presentation: visual appeal (1.0 pt)
+
+Scoring guide: 6.5-7.5=good, 7.6-8.5=excellent, 8.6+=exceptional
+
+IMPORTANT: The "professional_assessment" must be YOUR actual evaluation of THIS pizza, not the example text. Write real observations about what you see.
+
+Respond with ONLY valid JSON, no extra text.`
+                  }
+                ]
+              }
+            ],
+            max_tokens: 1500,
+            temperature: 0.3
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error?.message || `API error: ${response.status}`);
+        }
+        
+        // Extract response from OpenAI-compatible format
+        let aiText = data.choices?.[0]?.message?.content || '';
+        
+        console.log('Raw AI response:', aiText); // Debug logging
+        
+        // Clean up the response - remove markdown code blocks if present
+        aiText = aiText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        
+        // Extract JSON from response
+        const jsonMatch = aiText.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+          throw new Error('No valid JSON found in response. The model may not be following instructions properly.');
+        }
+        
+        let rating;
+        try {
+          rating = JSON.parse(jsonMatch[0]);
+        } catch (parseError) {
+          console.error('JSON parse error:', parseError);
+          console.error('Attempted to parse:', jsonMatch[0]);
+          throw new Error('The model returned invalid JSON. Try using a different model or adjusting the temperature setting in LM Studio.');
+        }
+        
+        // Check if it's actually a pizza (either explicit false or low confidence)
+        if (rating.is_pizza === false || (rating.confidence !== undefined && rating.confidence < 30)) {
+          // Use AI's funny message if provided, otherwise generate a generic one
+          const funnyMessages = [
+            "That's definitely not a pizza. Did you upload the wrong file, or are you testing my patience?",
+            "I'm a pizza evaluator, not a miracle worker. This isn't even close to pizza!",
+            "Nice try, but I wasn't trained to rate... whatever that is. Pizza only, please!",
+            "I see what you did there, but no. Just... no. Upload an actual pizza.",
+            "My sensors are detecting zero percent pizza in this image. Try again with actual food.",
+            "Bold of you to assume I'd rate that as pizza. Points for creativity, minus points for accuracy."
+          ];
+          
+          notPizzaMessage.textContent = rating.funny_message || funnyMessages[Math.floor(Math.random() * funnyMessages.length)];
+          notPizzaError.classList.add('active');
+          setTimeout(() => {
+            notPizzaError.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }, 100);
+        } else {
+          displayResults(rating);
+        }
+        
+      } catch (error) {
+        console.error('Error:', error);
+        alert(`Error analyzing pizza: ${error.message}\n\nMake sure:\n1. LM Studio is running\n2. A vision-capable model is loaded (like llava or bakllava)\n3. The API endpoint is correct\n4. CORS is enabled in LM Studio settings\n5. Try lowering the temperature in LM Studio to 0.3 for more consistent JSON output`);
+      } finally {
+        loading.classList.remove('active');
+        analyzeBtn.disabled = false;
+      }
+    });
+    
+    function displayResults(rating) {
+      // Convert score to stars
+      function getStarDisplay(score) {
+        const fullStars = Math.floor(score);
+        const hasHalfStar = (score % 1) >= 0.5;
+        let stars = '⭐'.repeat(fullStars);
+        if (hasHalfStar && fullStars < 10) {
+          stars += '⭐'; // Using full star for half (can't do half emoji easily)
+        }
+        return stars;
+      }
+      
+      // Animate score
+      let currentScore = 0;
+      const targetScore = rating.overall_score;
+      const duration = 1500;
+      const increment = targetScore / (duration / 16);
+      
+      const scoreInterval = setInterval(() => {
+        currentScore += increment;
+        if (currentScore >= targetScore) {
+          currentScore = targetScore;
+          clearInterval(scoreInterval);
+        }
+        scoreNumber.textContent = currentScore.toFixed(1);
+        starDisplay.textContent = getStarDisplay(currentScore);
+      }, 16);
+      
+      // Display categories with professional formatting
+      ratingsContainer.innerHTML = rating.categories.map(cat => `
+        <div class="rating-category">
+          <div class="rating-label">
+            <span>${cat.name}</span>
+            <span class="rating-score">${cat.score}/${cat.max_score}</span>
+          </div>
+          <div class="rating-text">${cat.assessment}</div>
+        </div>
+      `).join('');
+      
+      // Display professional assessment
+      verdictTitle.textContent = 'Professional Assessment';
+      verdictText.textContent = rating.professional_assessment;
+      
+      // Show results
+      results.classList.add('active');
+      
+      // Scroll to results
+      setTimeout(() => {
+        results.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+    
+    // Reset button
+    resetBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      currentImageData = null;
+      previewContainer.classList.remove('active');
+      results.classList.remove('active');
+      detailsToggle.classList.remove('active');
+      detailsContent.classList.remove('active');
+      
+      // Show the upload section and upload area again
+      document.querySelector('.upload-section').style.display = 'block';
+      document.getElementById('uploadArea').style.display = 'block';
+      
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>
