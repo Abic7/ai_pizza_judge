@@ -46,8 +46,8 @@ Example responses:
 
 1. Clone this repo:
 ```bash
-git clone https://github.com/Abic7/pizza_judge.git
-cd pizza_judge
+git clone https://github.com/Abic7/ai_pizza_judge.git
+cd ai_pizza_judge
 ```
 
 2. That's it. No dependencies. No build process. Just open the HTML file.
